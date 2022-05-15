@@ -1,7 +1,6 @@
-
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import MetaMaskOnboarding from '@metamask/onboarding';
-import chainList from '../chainList';
+import chainList from './chainList';
 
 export default function LazyConnect (props) {
   const { actionName, chainId, opts = {} } = props;
@@ -49,7 +48,7 @@ export default function LazyConnect (props) {
       return chainId;
     }
 
-    provider.provider.on('chainChanged', (_chainId) => {
+    provider.on('chainChanged', (_chainId) => {
       setUserChainId(_chainId);
     });
   }, []);
@@ -59,6 +58,7 @@ export default function LazyConnect (props) {
       { createChecklist({
         hasWallet: MetaMaskOnboarding.isMetaMaskInstalled(),
         chainId: chainId,
+        userChainId,
         chainName,
         needsAccountConnected,
         actionName,
@@ -73,11 +73,10 @@ export default function LazyConnect (props) {
 
   if (Number(userChainId) !== chainId) {
     return <div className="lazyConnect">
-      <p>This app requires the {chainName} network to be selected in your wallet, since this is just a test for now.</p>
-
       { createChecklist({
         hasWallet: MetaMaskOnboarding.isMetaMaskInstalled(),
         chainId: chainId,
+        userChainId,
         chainName,
         needsAccountConnected,
         actionName,
@@ -101,11 +100,12 @@ export default function LazyConnect (props) {
     </div>
   }
 
-  if (accounts && accounts.length === 0) {
+  if (needsAccountConnected && accounts && accounts.length === 0) {
     return <div className="lazyConnect">
       { createChecklist({
         hasWallet: MetaMaskOnboarding.isMetaMaskInstalled(),
         chainId: chainId,
+        userChainId,
         chainName,
         needsAccountConnected,
         actionName,
@@ -150,7 +150,7 @@ function createChecklist (checklistOpts) {
           <li>✅ Connect an account</li>
       )
           : null }
-      { !!chainId ? null : 
+      { !!chainId && 
         (Number(userChainId) !== chainId ?
           <li>☐ Connect to the {chainName} network</li> :
         <li>✅ Connect to the {chainName} network</li>)
