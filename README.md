@@ -1,4 +1,33 @@
-# Getting Started with Create React App
+# LazyConnect
+
+The laziest way to onboard your users as lazily as possible. Because onboarding to wallets and acquiring crypto can be a pain, and you should postpone it until actually necessary.
+
+## Usage
+
+Stop initializing providers in your main entry files. Let your projects be quiet. Build value for your users. If there are eventually any things that actually require a wallet, you can wrap those specific components with the `LazyConnect` element.
+
+You pass `LazyConnect` an `actionName` string which it uses to explain to users why they have to get a wallet to access this particular element. The `LazyConnect` module will make sure the user has a wallet (using the under-appreciated [@metamask/onboarding](https://github.com/MetaMask/metamask-onboarding) module so you actually get linked back to the site after they get their wallet set up), it'll even make sure they select the right network and connect an account, and then it'll get out of your way and let your components shine, and pass them a `provider` in their props, no detection or state management needed.
+
+Example:
+
+```jsx
+<LazyConnect actionName="leave a tip for us in crypto" chainId="5">
+  <TipButton currency={tokenAddress} amount={amountToRequest}/>
+</LazyConnect>
+```
+Then in your component, you get passed an [EIP-1193 style MetaMask Provider object](https://docs.metamask.io/guide/ethereum-provider.html#table-of-contents), which you can use directly or pass to your favorite convenience library.
+
+```jsx
+function TipButton (props) {
+  const { provider } = props;
+  // That's it!
+}
+```
+The styles are basically non existent right now, but that's nice, right? You can make it suit your style. Roll with it. Be lazy. Let your users be lazy. Live your lives.
+
+# Built using Create-React-App
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
