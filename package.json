@@ -1,7 +1,7 @@
 {
   "name": "lazyconnect",
   "description": "A react component for lazily onboarding users to setting up an Ethereum wallet.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "Dan Finlay <dan@metamask.io>",
   "private": false,
   "main": "dist/components/LazyConnect.js",
