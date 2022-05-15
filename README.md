@@ -2,6 +2,10 @@
 
 The laziest way to onboard your users as lazily as possible. Because onboarding to wallets and acquiring crypto can be a pain, and you should postpone it until actually necessary.
 
+## Installation
+
+`npm i lazyconnect -S` or `yarn add lazyconnect -S`
+
 ## Usage
 
 Stop initializing providers in your main entry files. Let your projects be quiet. Build value for your users. If there are eventually any things that actually require a wallet, you can wrap those specific components with the `LazyConnect` element.
@@ -11,6 +15,10 @@ You pass `LazyConnect` an `actionName` string which it uses to explain to users 
 Example:
 
 ```jsx
+// First import it somewhere
+import LazyConnect from 'lazyconnect';
+
+// Then wherever a component needs a provider, wrap it!:
 <LazyConnect actionName="leave a tip for us in crypto" chainId="5">
   <TipButton currency={tokenAddress} amount={amountToRequest}/>
 </LazyConnect>
