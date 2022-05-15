@@ -3,7 +3,7 @@
   "description": "A react component for lazily onboarding users to setting up an Ethereum wallet.",
   "version": "0.1.0",
   "author": "Dan Finlay <dan@metamask.io>",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
     "@testing-library/jest-dom": "^5.16.4",
