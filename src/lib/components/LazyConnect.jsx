@@ -1,8 +1,11 @@
+
 import React, { useCallback, useEffect, useState } from "react";
-import MetaMaskOnboarding from '@metamask/onboarding'
+import MetaMaskOnboarding from '@metamask/onboarding';
+import chainList from '../chainList';
 
 export default function LazyConnect (props) {
-  const { actionName, chainId } = props;
+  const { actionName, chainId, opts = {} } = props;
+  const { needsAccountConnected = true } = opts;
   const [provider, setInjectedProvider] = useState();
   const [accounts, setAccounts] = useState([]);
   const [error, setError] = useState(null);
@@ -12,6 +15,8 @@ export default function LazyConnect (props) {
   if (!provider && MetaMaskOnboarding.isMetaMaskInstalled()) { 
     setInjectedProvider(window.ethereum);
   }
+
+  const chainName = chainId ? chainList[Number(chainId)] : null;
 
   // Get accounts;
   useEffect(() => {
@@ -51,21 +56,38 @@ export default function LazyConnect (props) {
 
   if (!MetaMaskOnboarding.isMetaMaskInstalled()) {
     return (<div className="lazyConnect">
-      <p>You need a wallet to {actionName}.</p>
+      { createChecklist({
+        hasWallet: MetaMaskOnboarding.isMetaMaskInstalled(),
+        chainId: chainId,
+        chainName,
+        needsAccountConnected,
+        actionName,
+        accounts,
+      })}
       <button onClick={() => {
         const onboarding = new MetaMaskOnboarding();
         onboarding.startOnboarding();
-        }}>Install MetaMask</button>
+        }}>Get MetaMask</button>
     </div>);
   }
 
-  if (Number(userChainId) !== config.chainId) {
+  if (Number(userChainId) !== chainId) {
     return <div className="lazyConnect">
-      <p>This app requires the Goerli test network to be selected in your wallet, since this is just a test for now.</p>
+      <p>This app requires the {chainName} network to be selected in your wallet, since this is just a test for now.</p>
+
+      { createChecklist({
+        hasWallet: MetaMaskOnboarding.isMetaMaskInstalled(),
+        chainId: chainId,
+        chainName,
+        needsAccountConnected,
+        actionName,
+        accounts,
+      })}
+
       <button onClick={async () => {
         ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x' + config.chainId.toString(16) }],
+          params: [{ chainId: '0x' + chainId.toString(16) }],
         })
         .then(() => {
           setLoading(false);
@@ -75,13 +97,20 @@ export default function LazyConnect (props) {
           setError(reason);
         });
         setLoading(true);
-      }}>Switch to Goerli</button>
+      }}>Switch to { chainName }</button>
     </div>
   }
 
   if (accounts && accounts.length === 0) {
     return <div className="lazyConnect">
-      <p>You need to connect an account to {actionName}.</p>
+      { createChecklist({
+        hasWallet: MetaMaskOnboarding.isMetaMaskInstalled(),
+        chainId: chainId,
+        chainName,
+        needsAccountConnected,
+        actionName,
+        accounts,
+      })}
       <button onClick={async () => {
         const accounts = await ethereum.request({ method: 'wallet_requestAccounts' });
         setAccounts(accounts);
@@ -104,6 +133,29 @@ export default function LazyConnect (props) {
     return child;
   });  
 
-  return (<div>{childrenWithProps}</div>)
+  return (<div className="lazyConnected">{childrenWithProps}</div>)
+}
+
+function createChecklist (checklistOpts) {
+  const { chainId, userChainId, chainName, needsAccountConnected, actionName, hasWallet, accounts } = checklistOpts;
+  return (<div>
+    <p>You need a few things to {actionName}.</p>
+    <ol>
+      { hasWallet ?
+        <li>✅ Get a web3 compatible Wallet (like MetaMask)</li> :
+        <li>☐ Get a web3 compatible Wallet (like MetaMask)</li> }
+      { needsAccountConnected ? (
+          accounts && accounts.length === 0 ?
+          <li>☐ Connect an account</li> :
+          <li>✅ Connect an account</li>
+      )
+          : null }
+      { !!chainId ? null : 
+        (Number(userChainId) !== chainId ?
+          <li>☐ Connect to the {chainName} network</li> :
+        <li>✅ Connect to the {chainName} network</li>)
+      }
+    </ol>
+   </div>);
 }
 
