@@ -7,6 +7,9 @@ exports.default = void 0;
 const chainIds = {
   0: "kardia",
   1: "ethereum",
+  3: "ropsten test network",
+  4: "rinkeby test network",
+  5: "goerli test network",
   8: "ubiq",
   10: "optimism",
   19: "songbird",
@@ -14,6 +17,7 @@ const chainIds = {
   25: "cronos",
   30: "rsk",
   40: "telos",
+  42: "kovan test network",
   52: "csc",
   55: "zyx",
   56: "binance",

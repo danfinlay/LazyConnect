@@ -15,7 +15,7 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _onboarding = _interopRequireDefault(require("@metamask/onboarding"));
 
-var _chainList = _interopRequireDefault(require("../chainList"));
+var _chainList = _interopRequireDefault(require("./chainList"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52,7 +52,7 @@ function LazyConnect(props) {
     getAccounts().then(setAccounts).catch(console.error);
 
     async function getAccounts() {
-      const accounts = await ethereum.request({
+      const accounts = await provider.request({
         method: 'eth_accounts'
       });
       return accounts;
@@ -69,13 +69,13 @@ function LazyConnect(props) {
     getUserChainId().then(setUserChainId).catch(console.error);
 
     async function getUserChainId() {
-      const chainId = await ethereum.request({
+      const chainId = await provider.request({
         method: 'eth_chainId'
       });
       return chainId;
     }
 
-    provider.provider.on('chainChanged', _chainId => {
+    provider.on('chainChanged', _chainId => {
       setUserChainId(_chainId);
     });
   }, []);
@@ -85,8 +85,12 @@ function LazyConnect(props) {
       className: "lazyConnect"
     }, createChecklist({
       hasWallet: _onboarding.default.isMetaMaskInstalled(),
+      provider,
+      setLoading,
       chainId: chainId,
+      userChainId,
       chainName,
+      setAccounts,
       needsAccountConnected,
       actionName,
       accounts
@@ -98,52 +102,25 @@ function LazyConnect(props) {
     }, "Get MetaMask"));
   }
 
-  if (Number(userChainId) !== chainId) {
-    return /*#__PURE__*/_react.default.createElement("div", {
-      className: "lazyConnect"
-    }, /*#__PURE__*/_react.default.createElement("p", null, "This app requires the ", chainName, " network to be selected in your wallet, since this is just a test for now."), createChecklist({
-      hasWallet: _onboarding.default.isMetaMaskInstalled(),
-      chainId: chainId,
-      chainName,
-      needsAccountConnected,
-      actionName,
-      accounts
-    }), /*#__PURE__*/_react.default.createElement("button", {
-      onClick: async () => {
-        ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{
-            chainId: '0x' + chainId.toString(16)
-          }]
-        }).then(() => {
-          setLoading(false);
-        }).catch(reason => {
-          setLoading(false);
-          setError(reason);
-        });
-        setLoading(true);
-      }
-    }, "Switch to ", chainName));
-  }
+  const needsToSwitchChain = Number(userChainId) !== chainId;
+  const needsToConnectAccount = needsAccountConnected && accounts && accounts.length === 0;
+  const requiresAction = needsToSwitchChain || needsToConnectAccount;
 
-  if (accounts && accounts.length === 0) {
+  if (requiresAction) {
     return /*#__PURE__*/_react.default.createElement("div", {
       className: "lazyConnect"
     }, createChecklist({
+      setLoading,
+      provider,
       hasWallet: _onboarding.default.isMetaMaskInstalled(),
       chainId: chainId,
+      userChainId,
       chainName,
+      setAccounts,
       needsAccountConnected,
       actionName,
       accounts
-    }), /*#__PURE__*/_react.default.createElement("button", {
-      onClick: async () => {
-        const accounts = await ethereum.request({
-          method: 'wallet_requestAccounts'
-        });
-        setAccounts(accounts);
-      }
-    }, "Connect an account"));
+    }));
   }
 
   if (loading) {
@@ -178,10 +155,35 @@ function createChecklist(checklistOpts) {
     chainId,
     userChainId,
     chainName,
+    setAccounts,
+    provider,
+    setLoading,
     needsAccountConnected,
     actionName,
     hasWallet,
     accounts
   } = checklistOpts;
-  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("p", null, "You need a few things to ", actionName, "."), /*#__PURE__*/_react.default.createElement("ol", null, hasWallet ? /*#__PURE__*/_react.default.createElement("li", null, "\u2705 Get a web3 compatible Wallet (like MetaMask)") : /*#__PURE__*/_react.default.createElement("li", null, "\u2610 Get a web3 compatible Wallet (like MetaMask)"), needsAccountConnected ? accounts && accounts.length === 0 ? /*#__PURE__*/_react.default.createElement("li", null, "\u2610 Connect an account") : /*#__PURE__*/_react.default.createElement("li", null, "\u2705 Connect an account") : null, !!chainId ? null : Number(userChainId) !== chainId ? /*#__PURE__*/_react.default.createElement("li", null, "\u2610 Connect to the ", chainName, " network") : /*#__PURE__*/_react.default.createElement("li", null, "\u2705 Connect to the ", chainName, " network")));
+  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("p", null, "You need a few things to ", actionName, "."), /*#__PURE__*/_react.default.createElement("ol", null, hasWallet ? /*#__PURE__*/_react.default.createElement("li", null, "\u2705 Get a web3 compatible Wallet (like MetaMask)") : /*#__PURE__*/_react.default.createElement("li", null, "\u2610 Get a web3 compatible Wallet (like MetaMask)"), needsAccountConnected ? accounts && accounts.length === 0 ? /*#__PURE__*/_react.default.createElement("li", null, "\u2610 ", /*#__PURE__*/_react.default.createElement("button", {
+    onClick: async () => {
+      const accounts = await provider.request({
+        method: 'wallet_requestAccounts'
+      });
+      setAccounts(accounts);
+    }
+  }, "Connect an account")) : /*#__PURE__*/_react.default.createElement("li", null, "\u2705 Connect an account") : null, !!chainId && (Number(userChainId) !== chainId ? /*#__PURE__*/_react.default.createElement("li", null, "\u2610 ", /*#__PURE__*/_react.default.createElement("button", {
+    onClick: async () => {
+      provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{
+          chainId: '0x' + chainId.toString(16)
+        }]
+      }).then(() => {
+        setLoading(false);
+      }).catch(reason => {
+        setLoading(false);
+        setError(reason);
+      });
+      setLoading(true);
+    }
+  }, "Switch to the ", chainName, " network")) : /*#__PURE__*/_react.default.createElement("li", null, "\u2705 Switch to the ", chainName, " network"))));
 }
