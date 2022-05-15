@@ -4,6 +4,9 @@ The laziest way to onboard your users as lazily as possible. Because onboarding 
 
 ## Installation
 
+For now you probably actually want to just copy these files into your project. I have not figured out the process of publishing a react module that uses hooks but doesn't collide with yours. PRs welcome!
+
+Eventually I intend for this to work:
 `npm i lazyconnect -S` or `yarn add lazyconnect -S`
 
 ## Usage
