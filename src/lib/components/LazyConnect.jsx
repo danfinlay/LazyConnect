@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import MetaMaskOnboarding from '@metamask/onboarding'
-const config = require('./config.json');
 
 export default function LazyConnect (props) {
   const { actionName, chainId } = props;
