@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MetaMaskOnboarding from '@metamask/onboarding';
-import chainList from './chainList';
+import chainList from '../chainList';
 
 export default function LazyConnect (props) {
   const { actionName, chainId, opts = {} } = props;
@@ -66,6 +66,7 @@ export default function LazyConnect (props) {
         needsAccountConnected,
         actionName,
         accounts,
+        setError
       })}
       <button onClick={() => {
         const onboarding = new MetaMaskOnboarding();
@@ -115,7 +116,7 @@ export default function LazyConnect (props) {
 
 function createChecklist (checklistOpts) {
   const { chainId, userChainId, chainName, setAccounts, provider, setLoading,
-    needsAccountConnected, actionName, hasWallet, accounts } = checklistOpts;
+    needsAccountConnected, actionName, hasWallet, accounts, setError } = checklistOpts;
   return (<div>
     <p>You need a few things to {actionName}.</p>
     <ol>
@@ -125,7 +126,7 @@ function createChecklist (checklistOpts) {
       { needsAccountConnected ? (
           accounts && accounts.length === 0 ?
           <li>☐ <button onClick={async () => {
-            const accounts = await provider.request({ method: 'wallet_requestAccounts' });
+            const accounts = await provider.request({ method: 'eth_requestAccounts' });
             setAccounts(accounts);
           }}>Connect an account</button></li> :
           <li>✅ Connect an account</li>
