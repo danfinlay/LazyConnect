@@ -4,27 +4,19 @@
   "version": "0.2.1",
   "author": "Dan Finlay <dan@metamask.io>",
   "private": false,
-  "main": "dist/components/LazyConnect.js",
-  "module": "dist/components/LazyConnect.js",
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.2.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
-  },
   "scripts": {
     "start": "react-scripts start",
-    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -46,17 +38,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/core": "^7.17.10",
-    "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.17.10",
-    "install": "^0.13.0",
-    "npm": "^8.10.0"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danfinlay/LazyConnect.git"
+    "url": "github:danfinlay/LazyConnect"
   },
   "keywords": [
     "web3",
@@ -68,6 +52,5 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/danfinlay/LazyConnect/issues"
-  },
-  "homepage": "https://github.com/danfinlay/LazyConnect#readme"
+  }
 }
