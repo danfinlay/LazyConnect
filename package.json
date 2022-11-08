@@ -1,8 +1,11 @@
 {
-  "name": "create-react-app",
-  "version": "0.1.0",
-  "private": true,
+  "name": "lazyconnect",
+  "description": "A react component for lazily onboarding users to setting up an Ethereum wallet.",
+  "version": "0.2.1",
+  "author": "Dan Finlay <dan@metamask.io>",
+  "private": false,
   "dependencies": {
+    "@metamask/onboarding": "^1.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -34,5 +37,20 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:danfinlay/LazyConnect"
+  },
+  "keywords": [
+    "web3",
+    "MetaMask",
+    "ethereum",
+    "wallet",
+    "React"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danfinlay/LazyConnect/issues"
   }
 }
