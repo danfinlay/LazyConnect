@@ -126,7 +126,7 @@ function createChecklist (checklistOpts) {
       { needsAccountConnected ? (
           accounts && accounts.length === 0 ?
           <li>☐ <button onClick={async () => {
-            const accounts = await provider.request({ method: 'wallet_requestAccounts' });
+            const accounts = await provider.request({ method: 'eth_requestAccounts' });
             setAccounts(accounts);
           }}>Connect an account</button></li> :
           <li>✅ Connect an account</li>
